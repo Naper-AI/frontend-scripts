@@ -349,8 +349,8 @@ const NaperSignup = {
 
         // Replace template variables
         let itemHtml = this.views.storeItem
-          .replace(/\{\{store\.name\}\}/g, subscription.name || 'Unnamed Store')
-          .replace(/\{\{store\.id\}\}/g, subscription.site_id)
+          .replace(/\{\{store\.name\}\}/g, subscription.site.name || 'Unnamed Store')
+          .replace(/\{\{store\.id\}\}/g, subscription.site.id)
           .replace(/\{\{store\.plan\}\}/g, planName)
           .replace(/\{\{store\.plan_class\}\}/g, planClass);
 
