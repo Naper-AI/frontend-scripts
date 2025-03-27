@@ -322,7 +322,7 @@ const NaperSignup = {
     const cancelUrl = window.location.href;
     
     const url = new URL(baseUrl, window.location.origin);
-    url.searchParams.set('price', priceId);
+    url.searchParams.set('price_id', priceId);
     url.searchParams.set('site_id', siteId);
     url.searchParams.set('success_url', successUrl);
     url.searchParams.set('cancel_url', cancelUrl);
