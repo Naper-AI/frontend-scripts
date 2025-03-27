@@ -108,7 +108,7 @@ const NaperSignup = {
     `
   },
 
-  init() {    
+  init() {
     // Otherwise, show loading view and fetch user data
     this.renderView('loading');
     this.fetchUserData();
@@ -127,7 +127,7 @@ const NaperSignup = {
     if (!container) return;
 
     this.state.currentView = viewName;
-    
+
     // For planSelection view, we'll handle the content in the setupPlanSelectionHandlers method
     if (viewName !== 'planSelection') {
       container.innerHTML = this.views[viewName];
@@ -156,7 +156,7 @@ const NaperSignup = {
     .then(([userData, subscriptions]) => {
       this.state.userData = userData;
       this.state.subscriptions = subscriptions;
-      
+  
       this.determineInitialView();
     })
     .catch(error => {
@@ -173,18 +173,18 @@ const NaperSignup = {
 
   determineInitialView() {
     const { userData, subscriptions } = this.state;
-    
+
     // Check URL parameters again to ensure we don't override the plan selection
     const urlParams = new URLSearchParams(window.location.search);
     const siteId = urlParams.get('site_id');
     const createNew = urlParams.get('create_new');
-    
+
     // If create_new parameter exists, show create store form
     if (createNew) {
       this.renderView('createStore');
       return;
     }
-    
+
     // If site_id exists in URL and we're on the /plans page, show plan selection
     // This takes precedence over any other view determination
     if (siteId) {
@@ -198,7 +198,7 @@ const NaperSignup = {
       this.renderView('createStore');
       return;
     }
-    
+
     // If they have stores, show the store list
     if (subscriptions.some(sub => sub.site_id !== null)) {
       this.renderView('storeList');
@@ -211,7 +211,7 @@ const NaperSignup = {
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      
+  
       const storeName = form.querySelector('input[name="site_name"]').value;
       if (!storeName.trim()) {
         this.showNotification('Please enter a store name', 'error');
@@ -219,9 +219,9 @@ const NaperSignup = {
       }
 
       this.renderView('creatingStore');
-      
+  
       const formData = new FormData(form);
-      
+  
       fetch('/portal/v1/sites', {
         method: 'POST',
         body: formData,
@@ -251,18 +251,18 @@ const NaperSignup = {
       console.error('Pricing table element not found with ID: pricing-table');
       return;
     }
-    
+
     // Get or create our container
     const container = document.getElementById('naper-signup-container');
     if (container) {
       // Clear existing content
       container.innerHTML = '';
-      
+  
       // Show upgrade banner if there's a site_id in the URL (indicating we're upgrading)
       const urlParams = new URLSearchParams(window.location.search);
       const siteId = urlParams.get('site_id');
       const upgrading = urlParams.get('upgrading');
-      
+  
       if (siteId && upgrading) {
         // Create upgrade notification banner
         const upgradeBanner = document.createElement('div');
@@ -275,23 +275,23 @@ const NaperSignup = {
         `;
         container.appendChild(upgradeBanner);
       }
-      
+  
       // Move the pricing table to our container (preserves all event handlers)
       // Save the original parent to restore later if needed
       const originalParent = pricingTableElement.parentNode;
       container.appendChild(pricingTableElement);
-      
+  
       // Find all subscribe buttons in the moved pricing table
       const subscribeButtons = container.querySelectorAll('.subscribe-button');
-      
+  
       // Set up handlers for subscribe buttons
       subscribeButtons.forEach(button => {
         // Remove the href attribute so it doesn't navigate away
         button.removeAttribute('href');
-        
+
         // Get the pricing ID directly from the button ID
         const buttonId = button.id;
-        
+
         // Set up click handler
         button.addEventListener('click', () => {
           if (buttonId === 'free-plan') {
@@ -309,33 +309,33 @@ const NaperSignup = {
 
   buildCheckoutUrl(priceId, urlSiteId) {
     const baseUrl = '/portal/v1/payments/stripe/checkout';
-    
+
     // Use the site ID from the state if available, otherwise use the one from the URL
     const siteId = this.state.newStoreData?.id || urlSiteId;
-    
+
     if (!siteId) {
       console.error('No site ID found for checkout');
       return '/plans';
     }
-    
+
     const successUrl = `/dashboard?site_id=${siteId}`;
     const cancelUrl = window.location.href;
-    
+
     const url = new URL(baseUrl, window.location.origin);
     url.searchParams.set('price_id', priceId);
     url.searchParams.set('site_id', siteId);
     url.searchParams.set('success_url', successUrl);
     url.searchParams.set('cancel_url', cancelUrl);
-    
+
     return url.toString();
   },
 
   renderStoreList() {
     const storeList = document.getElementById('naper-store-list');
     if (!storeList || !this.state.subscriptions) return;
-    
+
     storeList.innerHTML = '';
-    
+
     this.state.subscriptions.forEach(subscription => {
       if (subscription.site_id) {
         const storeItem = document.createElement('div');
@@ -376,7 +376,7 @@ const NaperSignup = {
         storeList.appendChild(storeItem);
       }
     });
-    
+
     if (storeList.children.length === 0) {
       storeList.innerHTML = `
         <div class="np:text-center np:py-8 np:text-gray-500">
@@ -389,11 +389,11 @@ const NaperSignup = {
   setupStoreListHandlers() {
     const createButton = document.getElementById('naper-create-new-store');
     if (!createButton) return;
-    
+
     createButton.addEventListener('click', () => {
       // Check if user can create more stores
       const hasReachedLimit = this.checkStoreLimit();
-      
+  
       if (hasReachedLimit) {
         this.renderView('storeLimit');
       } else {
@@ -404,14 +404,14 @@ const NaperSignup = {
 
   checkStoreLimit() {
     const { userData, subscriptions } = this.state;
-    
+
     // Super admins have no limit
     if (userData.user.is_super_admin) return false;
-    
+
     // Check for free subscription limit
     const hasFreeSubscription = subscriptions.some(sub => sub.is_free);
     const hasFreeStore = subscriptions.some(sub => sub.site_id !== null && sub.is_free);
-    
+
     // If they have a free subscription and a free store, they've reached the limit
     return hasFreeSubscription && hasFreeStore;
   },
@@ -422,9 +422,9 @@ const NaperSignup = {
       type === 'error' ? 'np:bg-red-500 np:text-white' : 'np:bg-blue-500 np:text-white'
     }`;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
       notification.classList.add('np:opacity-0', 'np:transition-opacity', 'np:duration-500');
       setTimeout(() => notification.remove(), 500);
