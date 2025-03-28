@@ -318,7 +318,7 @@ const NaperSignup = {
       return '/plans';
     }
 
-    const successUrl = `/dashboard?site_id=${siteId}`;
+    const successUrl = `https://naper.ai/dashboard?site_id=${siteId}`;
     const cancelUrl = window.location.href;
 
     const url = new URL(baseUrl, window.location.origin);
