@@ -326,6 +326,7 @@ const NaperSignup = {
     url.searchParams.set('site_id', siteId);
     url.searchParams.set('success_url', successUrl);
     url.searchParams.set('cancel_url', cancelUrl);
+    url.searchParams.set('allow_promotions', true);
 
     return url.toString();
   },
